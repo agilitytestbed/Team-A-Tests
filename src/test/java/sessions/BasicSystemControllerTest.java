@@ -3,6 +3,8 @@ package sessions;
 import categories.Category;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -10,6 +12,7 @@ import org.springframework.context.annotation.DependsOn;
 import transactions.Transaction;
 
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.restassured.RestAssured.*;
 import static io.restassured.config.JsonConfig.jsonConfig;
@@ -19,6 +22,29 @@ import static org.hamcrest.Matchers.*;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BasicSystemControllerTest {
     public static final String API_URL = "/api/v0";
+    public static final AtomicInteger counter = new AtomicInteger();
+
+    @Before
+    public void setup(){/*
+        get(API_URL + "/sessions");
+        counter.incrementAndGet();
+        Transaction setupTransaction = new Transaction();
+        setupTransaction.setAmount(300);
+        given().contentType("application/json").body(setupTransaction)
+                .put(API_URL + "/{sessionId}/transactions", 1);
+        counter.incrementAndGet();
+        Category setupCategory = new Category();
+        setupCategory.setName("setupCategory");
+        given().contentType("application/json").body(setupCategory)
+                .put(API_URL + "/{sessionId}/categories", 1);
+        counter.incrementAndGet();
+        System.out.println("Setup Complete : " + counter.get());*/
+    }
+
+    @After
+    public void teardown(){
+
+    }
 
     @Test
     public void basicSystemTest() throws Exception {
@@ -28,8 +54,10 @@ public class BasicSystemControllerTest {
         getTransactions();
         newCategory();
         getCategory();
-        //getCategories();
+        getCategories();
         assignCategory();
+        getTransactionByCategory();
+        updateCategory();
     }
 
     //@Test
@@ -167,18 +195,54 @@ public class BasicSystemControllerTest {
                 statusCode(200).
                 body(
                         "amount", equalTo(250.00),
-                        "category.name", equalTo("testCategory")
+                        "categoryId", equalTo(6)
                 );
     }
 
     //@Test
-    /*private void getCategories() throws Exception {
+    private void getCategories() throws Exception {
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
         when().
-                get("/{sessionId}/categories",1).
+                get(API_URL + "/{sessionId}/categories",1).
         then().
                 body("6.name", equalTo("testCategory"), "7.name", equalTo("anotherCategory"));
-    }*/
+    }
+
+    private void getTransactionByCategory() {
+        given().
+                config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
+                contentType("application/json").
+                param("categoryId", 6).
+        when().
+                get(API_URL + "/{sessionId}/transactions", 1).
+        then().
+                body("4.amount", equalTo(250.0), "4.category.name", equalTo("testCategory"),"3.amount", equalTo(null));
+    }
+
+    private void updateCategory() {
+        Category testCategory = new Category();
+        testCategory.setName("new testCategory");
+        testCategory.setId(50);
+        given().
+                config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
+                contentType("application/json").
+                body(testCategory).
+        when().
+                put(API_URL + "/{sessionId}/categories/{categoryId}", 1, 6).
+        then().
+                statusCode(200).
+                body("name",equalTo("new testCategory"), "id", equalTo(6));
+
+        given().
+                config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
+                contentType("application/json").
+                param("categoryId", 6).
+                when().
+                get(API_URL + "/{sessionId}/transactions", 1).
+                then().
+                body("4.amount", equalTo(250.0), "4.category.name", equalTo("new testCategory"),"3.amount", equalTo(null));
+    }
+
 }
