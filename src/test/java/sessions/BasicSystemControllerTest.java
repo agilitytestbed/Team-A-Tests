@@ -234,15 +234,6 @@ public class BasicSystemControllerTest {
         then().
                 statusCode(200).
                 body("name",equalTo("new testCategory"), "id", equalTo(6));
-
-        given().
-                config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
-                contentType("application/json").
-                param("categoryId", 6).
-                when().
-                get(API_URL + "/{sessionId}/transactions", 1).
-                then().
-                body("4.amount", equalTo(250.0), "4.category.name", equalTo("new testCategory"),"3.amount", equalTo(null));
     }
 
 }

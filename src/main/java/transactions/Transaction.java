@@ -15,7 +15,7 @@ public class Transaction {
 
     private double amount;
 
-    private Category category;
+    private int categoryId;
 
     public int getId() {
         return transactionId;
@@ -54,11 +54,11 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public Category getCategory() {
-        return category;
+    public int getCategory() {
+        return categoryId;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategory(int categoryId) {
+        this.categoryId = categoryId;
     }
 }
