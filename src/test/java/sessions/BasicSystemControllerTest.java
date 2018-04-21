@@ -58,6 +58,9 @@ public class BasicSystemControllerTest {
         assignCategory();
         getTransactionByCategory();
         updateCategory();
+        updateTransaction();
+        deleteTransaction();
+        deleteCategory();
     }
 
     //@Test
@@ -195,7 +198,7 @@ public class BasicSystemControllerTest {
                 statusCode(200).
                 body(
                         "amount", equalTo(250.00),
-                        "categoryId", equalTo(6)
+                        "category.id", equalTo(6)
                 );
     }
 
@@ -234,6 +237,66 @@ public class BasicSystemControllerTest {
         then().
                 statusCode(200).
                 body("name",equalTo("new testCategory"), "id", equalTo(6));
+
+        given().
+                config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
+                contentType("application/json").
+        when().
+                get(API_URL + "/{sessionId}/transactions/{transactionId}",1,4).
+        then().
+                body("amount", equalTo(250.0), "category.name", equalTo("new testCategory"));
+    }
+
+    private void updateTransaction() {
+        Transaction testTransaction = new Transaction();
+        testTransaction.setAmount(1000);
+        testTransaction.setId(50);
+        testTransaction.setCategory(7);
+        given().
+                config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
+                contentType("application/json").
+                body(testTransaction).
+        when().
+                put(API_URL + "/{sessionId}/transactions/{transactionId}", 1, 3).
+        then().
+                statusCode(200).
+                body("id",equalTo(3), "amount", equalTo(1000));
+    }
+
+    private void deleteTransaction() {
+        given().
+                config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
+                contentType("application/json").
+        when().
+                delete(API_URL + "/{sessionId}/transactions/{transactionId}",1,5).
+        then().
+                statusCode(204);
+
+        given().
+                config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
+                contentType("application/json").
+        when().
+                get(API_URL + "/{sessionId}/transactions/{transactionId}",1,5).
+        then().
+                statusCode(404);
+    }
+
+    private void deleteCategory() {
+        given().
+                config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
+                contentType("application/json").
+        when().
+                delete(API_URL + "/{sessionId}/categories/{categoryId}",1,6).
+        then().
+                statusCode(204);
+
+        given().
+                config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
+                contentType("application/json").
+        when().
+                get(API_URL + "/{sessionId}/transactions/{transactionId}",1,4).
+        then().
+                body("amount", equalTo(250.0), "category.name", isEmptyOrNullString());
     }
 
 }
