@@ -23,6 +23,8 @@ import static org.hamcrest.Matchers.*;
 public class BasicSystemControllerTest {
     public static final String API_URL = "/api/v0";
     public static final AtomicInteger counter = new AtomicInteger();
+    private Category categorySeven;
+    private Category categorySix;
 
     @Before
     public void setup(){/*
@@ -56,7 +58,6 @@ public class BasicSystemControllerTest {
         getCategory();
         getCategories();
         assignCategory();
-        getTransactionByCategory();
         updateCategory();
         updateTransaction();
         deleteTransaction();
@@ -65,12 +66,14 @@ public class BasicSystemControllerTest {
 
     //@Test
     private void newSession() throws Exception {
+        System.out.println("[Testing session creation]");
         when().get(API_URL + "/sessions").then().statusCode(200).body("sessionID", equalTo(1));
         when().get(API_URL + "/sessions").then().statusCode(200).body("sessionID", equalTo(2));
     }
 
     //@Test
     private void newTransaction() throws Exception {
+        System.out.println("[Testing transaction creation]");
         Transaction testTransaction = new Transaction();
         testTransaction.setAmount(500.00);
         given().
@@ -118,6 +121,7 @@ public class BasicSystemControllerTest {
 
     //@Test
     private void getTransaction() throws Exception {
+        System.out.println("[Testing getting transaction]");
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
         when().
@@ -131,6 +135,7 @@ public class BasicSystemControllerTest {
 
     //@Test
     private void getTransactions() throws Exception {
+        System.out.println("[Testing getting transactions]");
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
         when().
@@ -141,6 +146,7 @@ public class BasicSystemControllerTest {
 
     //@Test
     private void newCategory() throws Exception {
+        System.out.println("[Testing category creation]");
         Category testCategory = new Category();
         testCategory.setName("testCategory");
         given().
@@ -156,6 +162,10 @@ public class BasicSystemControllerTest {
                         "id", equalTo(6)
                 )
         ;
+        testCategory.setId(6);
+        categorySix = new Category();
+        categorySix.setId(6);
+        categorySix.setName("testCategory");
         testCategory.setId(3);
         testCategory.setName("anotherCategory");
         given().
@@ -171,10 +181,13 @@ public class BasicSystemControllerTest {
                         "id", equalTo(7)
                 )
         ;
+        testCategory.setId(7);
+        categorySeven = testCategory;
     }
 
     //@Test
     private void getCategory() throws Exception {
+        System.out.println("[Testing getting category]");
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
         when().
@@ -188,10 +201,11 @@ public class BasicSystemControllerTest {
 
     //@Test
     private void assignCategory() throws Exception {
+        System.out.println("[Testing assigning category]");
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
-                param("categoryId",6).
+                body(categorySix).
         when().
                 patch(API_URL + "/{sessionId}/transactions/{transactionId}", 1, 4).
         then().
@@ -204,6 +218,7 @@ public class BasicSystemControllerTest {
 
     //@Test
     private void getCategories() throws Exception {
+        System.out.println("[Testing getting categories]");
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
@@ -211,17 +226,6 @@ public class BasicSystemControllerTest {
                 get(API_URL + "/{sessionId}/categories",1).
         then().
                 body("6.name", equalTo("testCategory"), "7.name", equalTo("anotherCategory"));
-    }
-
-    private void getTransactionByCategory() {
-        given().
-                config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
-                contentType("application/json").
-                param("categoryId", 6).
-        when().
-                get(API_URL + "/{sessionId}/transactions", 1).
-        then().
-                body("4.amount", equalTo(250.0), "4.category.name", equalTo("testCategory"),"3.amount", equalTo(null));
     }
 
     private void updateCategory() {
@@ -251,7 +255,7 @@ public class BasicSystemControllerTest {
         Transaction testTransaction = new Transaction();
         testTransaction.setAmount(1000);
         testTransaction.setId(50);
-        testTransaction.setCategory(7);
+        testTransaction.setCategory(categorySeven);
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
@@ -260,7 +264,7 @@ public class BasicSystemControllerTest {
                 put(API_URL + "/{sessionId}/transactions/{transactionId}", 1, 3).
         then().
                 statusCode(200).
-                body("id",equalTo(3), "amount", equalTo(1000));
+                body("id",equalTo(3), "amount", equalTo(1000.0));
     }
 
     private void deleteTransaction() {
@@ -270,7 +274,7 @@ public class BasicSystemControllerTest {
         when().
                 delete(API_URL + "/{sessionId}/transactions/{transactionId}",1,5).
         then().
-                statusCode(204);
+                statusCode(200);
 
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
@@ -288,7 +292,7 @@ public class BasicSystemControllerTest {
         when().
                 delete(API_URL + "/{sessionId}/categories/{categoryId}",1,6).
         then().
-                statusCode(204);
+                statusCode(200);
 
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).

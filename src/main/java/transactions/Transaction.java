@@ -1,64 +1,80 @@
 package transactions;
 
 import categories.Category;
-
 import java.util.Date;
 
 public class Transaction {
     private int transactionId;
 
-    private Date transactionDate;
+    private String transactionDate;
 
-    private String payee;
-
-    private String paymentReference;
+    private String externalIBAN;
 
     private double amount;
 
-    private int categoryId;
+    private TransactionType type;
+
+    private Category category;
+
+
 
     public int getId() {
+
         return transactionId;
     }
 
     public void setId(int transactionId) {
+
         this.transactionId = transactionId;
     }
 
-    public Date getTranactionDate() {
+    public String getTranactionDate() {
+
         return transactionDate;
     }
 
-    public void setTranactionDate(Date transactionDate) {
+    public void setTranactionDate(String transactionDate) {
+
         this.transactionDate = transactionDate;
     }
-    public String getPayee() {
-        return payee;
+
+
+    private String getExternalIBAN(){
+        return externalIBAN;
     }
 
-    public void setPayee(String payee) {
-        this.payee = payee;
-    }
-    public String getPaymentReference() {
-        return paymentReference;
+    public void setExternalIBAN(String externalIBAN) {
+
+        this.externalIBAN = externalIBAN;
     }
 
-    public void setPaymentReference(String paymentReference) {
-        this.paymentReference = paymentReference;
+    private TransactionType getType(){
+        return type;
     }
+
+    public void setType(TransactionType type) {
+        this.type = type;
+    }
+
     public double getAmount() {
+
         return amount;
     }
 
+
+
     public void setAmount(double amount) {
+
         this.amount = amount;
     }
 
-    public int getCategory() {
-        return categoryId;
+    public Category getCategory() {
+
+        return category;
     }
 
-    public void setCategory(int categoryId) {
-        this.categoryId = categoryId;
+    public void setCategory(Category category) {
+
+        this.category = category;
     }
 }
