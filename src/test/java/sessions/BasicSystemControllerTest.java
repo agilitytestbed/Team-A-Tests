@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BasicSystemControllerTest {
-    public static final String API_URL = "/api/v0";
+    public static final String API_URL = "/api/v1";
     public static final AtomicInteger counter = new AtomicInteger();
     private Category categorySeven;
     private Category categorySix;
