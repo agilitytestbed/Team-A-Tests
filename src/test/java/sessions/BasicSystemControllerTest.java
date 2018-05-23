@@ -67,8 +67,8 @@ public class BasicSystemControllerTest {
     //@Test
     private void newSession() throws Exception {
         System.out.println("[Testing session creation]");
-        when().get(API_URL + "/sessions").then().statusCode(200).body("sessionID", equalTo(1));
-        when().get(API_URL + "/sessions").then().statusCode(200).body("sessionID", equalTo(2));
+        when().get(API_URL + "/sessions").then().statusCode(201).body("sessionID", equalTo(1));
+        when().get(API_URL + "/sessions").then().statusCode(201).body("sessionID", equalTo(2));
     }
 
     //@Test
@@ -80,8 +80,9 @@ public class BasicSystemControllerTest {
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
                 body(testTransaction).
+                queryParam("sessionId", 1).
         when().
-                post(API_URL + "/{sessionId}/transactions", 1).
+                post(API_URL + "/transactions").
         then().
                 statusCode(201).
                 body(
@@ -94,8 +95,9 @@ public class BasicSystemControllerTest {
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
                 body(testTransaction).
+                queryParam("sessionId", 1).
         when().
-                post(API_URL + "/{sessionId}/transactions", 1).
+                post(API_URL + "/transactions").
         then().
                 statusCode(201).
                 body(
@@ -109,8 +111,9 @@ public class BasicSystemControllerTest {
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
                 body(testTransaction).
+                queryParam("sessionId", 1).
         when().
-                post(API_URL + "/{sessionId}/transactions", 1).
+                post(API_URL + "/transactions").
         then().
                 statusCode(201).
                 body(
@@ -124,8 +127,9 @@ public class BasicSystemControllerTest {
         System.out.println("[Testing getting transaction]");
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
+                queryParam("sessionId", 1).
         when().
-                get(API_URL + "/{sessionId}/transactions/{transactionId}",1,3).
+                get(API_URL + "/transactions/{transactionId}",3).
         then().
                 body(
                         "id", equalTo(3),
@@ -138,8 +142,9 @@ public class BasicSystemControllerTest {
         System.out.println("[Testing getting transactions]");
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
+                queryParam("sessionId", 1).
         when().
-                get(API_URL + "/{sessionId}/transactions/", 1).
+                get(API_URL + "/transactions/").
         then().
                 body("3.amount", equalTo(500.00), "4.amount", equalTo(250.00));
     }
@@ -153,8 +158,9 @@ public class BasicSystemControllerTest {
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
                 body(testCategory).
+                queryParam("sessionId", 1).
         when().
-                post(API_URL + "/{sessionId}/categories", 1).
+                post(API_URL + "/categories").
         then().
                 statusCode(201).
                 body(
@@ -172,8 +178,9 @@ public class BasicSystemControllerTest {
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
                 body(testCategory).
+                queryParam("sessionId", 1).
         when().
-                post(API_URL + "/{sessionId}/categories", 1).
+                post(API_URL + "/categories").
         then().
                 statusCode(201).
                 body(
@@ -190,8 +197,9 @@ public class BasicSystemControllerTest {
         System.out.println("[Testing getting category]");
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
+                queryParam("sessionId", 1).
         when().
-                get(API_URL+"/{sessionId}/categories/{categoryId}",1,6).
+                get(API_URL+"/categories/{categoryId}",6).
         then().
                 statusCode(200).body(
                         "name", equalTo("testCategory"),
@@ -206,8 +214,9 @@ public class BasicSystemControllerTest {
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
                 body(categorySix).
+                queryParam("sessionId", 1).
         when().
-                patch(API_URL + "/{sessionId}/transactions/{transactionId}", 1, 4).
+                patch(API_URL + "/transactions/{transactionId}", 4).
         then().
                 statusCode(200).
                 body(
@@ -222,8 +231,9 @@ public class BasicSystemControllerTest {
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
+                queryParam("sessionId", 1).
         when().
-                get(API_URL + "/{sessionId}/categories",1).
+                get(API_URL + "/categories").
         then().
                 body("6.name", equalTo("testCategory"), "7.name", equalTo("anotherCategory"));
     }
@@ -236,8 +246,9 @@ public class BasicSystemControllerTest {
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
                 body(testCategory).
+                queryParam("sessionId", 1).
         when().
-                put(API_URL + "/{sessionId}/categories/{categoryId}", 1, 6).
+                put(API_URL + "/categories/{categoryId}", 6).
         then().
                 statusCode(200).
                 body("name",equalTo("new testCategory"), "id", equalTo(6));
@@ -245,8 +256,9 @@ public class BasicSystemControllerTest {
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
+                queryParam("sessionId", 1).
         when().
-                get(API_URL + "/{sessionId}/transactions/{transactionId}",1,4).
+                get(API_URL + "/transactions/{transactionId}",4).
         then().
                 body("amount", equalTo(250.0), "category.name", equalTo("new testCategory"));
     }
@@ -260,8 +272,9 @@ public class BasicSystemControllerTest {
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
                 body(testTransaction).
+                queryParam("sessionId", 1).
         when().
-                put(API_URL + "/{sessionId}/transactions/{transactionId}", 1, 3).
+                put(API_URL + "/transactions/{transactionId}", 3).
         then().
                 statusCode(200).
                 body("id",equalTo(3), "amount", equalTo(1000.0));
@@ -271,34 +284,38 @@ public class BasicSystemControllerTest {
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
+                queryParam("sessionId", 1).
         when().
-                delete(API_URL + "/{sessionId}/transactions/{transactionId}",1,5).
+                delete(API_URL + "/transactions/{transactionId}",5).
         then().
                 statusCode(200);
 
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
+                queryParam("sessionId", 1).
         when().
-                get(API_URL + "/{sessionId}/transactions/{transactionId}",1,5).
+                get(API_URL + "/transactions/{transactionId}",5).
         then().
-                statusCode(404);
+                statusCode(400);
     }
 
     private void deleteCategory() {
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
+                queryParam("sessionId", 1).
         when().
-                delete(API_URL + "/{sessionId}/categories/{categoryId}",1,6).
+                delete(API_URL + "/categories/{categoryId}",6).
         then().
                 statusCode(200);
 
         given().
                 config(RestAssured.config().jsonConfig(jsonConfig().numberReturnType(DOUBLE))).
                 contentType("application/json").
+                queryParam("sessionId", 1).
         when().
-                get(API_URL + "/{sessionId}/transactions/{transactionId}",1,4).
+                get(API_URL + "/transactions/{transactionId}",4).
         then().
                 body("amount", equalTo(250.0), "category.name", isEmptyOrNullString());
     }
