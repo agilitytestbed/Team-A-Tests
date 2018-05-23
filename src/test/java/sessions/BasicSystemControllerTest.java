@@ -67,8 +67,8 @@ public class BasicSystemControllerTest {
     //@Test
     private void newSession() throws Exception {
         System.out.println("[Testing session creation]");
-        when().get(API_URL + "/sessions").then().statusCode(201).body("sessionID", equalTo(1));
-        when().get(API_URL + "/sessions").then().statusCode(201).body("sessionID", equalTo(2));
+        when().get(API_URL + "/sessions").then().statusCode(201).body("sessionID", equalTo("1"));
+        when().get(API_URL + "/sessions").then().statusCode(201).body("sessionID", equalTo("2"));
     }
 
     //@Test
